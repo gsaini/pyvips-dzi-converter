@@ -2,11 +2,13 @@
 dzi_utils.py
 Utility functions for DZI conversion and packaging using pyvips.
 """
-import os
-import pyvips
-import zipfile
 import io
+import os
 import shutil
+import zipfile
+
+import pyvips
+
 
 def ensure_output_dir():
     """
@@ -18,6 +20,7 @@ def ensure_output_dir():
     os.makedirs(output_dir, exist_ok=True)
     return output_dir
 
+
 def count_dzi_files(output_dir):
     """
     Counts the number of DZI descriptor (.dzi) files in the output directory.
@@ -27,6 +30,7 @@ def count_dzi_files(output_dir):
         int: Number of .dzi files found.
     """
     return len([f for f in os.listdir(output_dir) if f.endswith('.dzi')])
+
 
 def convert_to_dzi(input_path, output_dir):
     """
@@ -51,6 +55,7 @@ def convert_to_dzi(input_path, output_dir):
     image.dzsave(dzi_path, tile_size=512)
     return dzi_path + ".dzi"
 
+
 def count_dzi_related_files(dzi_base_path):
     """
     Counts all files generated for a DZI conversion, including the .dzi descriptor and all tile files in the folder.
@@ -64,9 +69,10 @@ def count_dzi_related_files(dzi_base_path):
     if os.path.exists(dzi_descriptor):
         count += 1
     tiles_folder = dzi_base_path + '_files'
-    for root, _, files in os.walk(tiles_folder):
+    for _, _, files in os.walk(tiles_folder):
         count += len(files)
     return count
+
 
 def create_dzi_zip(dzi_base_path):
     """
@@ -84,9 +90,9 @@ def create_dzi_zip(dzi_base_path):
             zipf.write(dzi_descriptor, os.path.basename(dzi_descriptor))
         # Add all tile files
         tiles_folder = dzi_base_path + '_files'
-        for root, _, files in os.walk(tiles_folder):
+        for _, _, files in os.walk(tiles_folder):
             for file in files:
-                abs_path = os.path.join(root, file)
+                abs_path = os.path.join(tiles_folder, file)
                 rel_path = os.path.relpath(abs_path, os.path.dirname(dzi_base_path))
                 zipf.write(abs_path, rel_path)
     zip_buffer.seek(0)

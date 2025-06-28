@@ -1,6 +1,7 @@
-import streamlit as st
+"""Streamlit app for DZI conversion using pyvips."""
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+import streamlit as st
 from dzi_utils import (
     ensure_output_dir,
     count_dzi_files,
@@ -24,6 +25,8 @@ def async_convert_to_dzi(input_path, output_dir, loop=None):
     with ThreadPoolExecutor() as pool:
         return loop.run_in_executor(pool, convert_to_dzi, input_path, output_dir)
 
+st.set_page_config(page_title="DZI Converter", page_icon="🖼️")
+
 st.title("DZI Converter with pyvips & Streamlit")
 
 uploaded_file = st.file_uploader(
@@ -33,12 +36,14 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
     with st.spinner("Converting to DZI format..."):
         temp_input_path = f"/tmp/{uploaded_file.name}"
-        with open(temp_input_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
+        with open(temp_input_path, "wb") as file_handle:
+            file_handle.write(uploaded_file.getbuffer())
         output_dir = ensure_output_dir()
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        dzi_file = loop.run_until_complete(async_convert_to_dzi(temp_input_path, output_dir, loop))
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+        dzi_file = event_loop.run_until_complete(
+            async_convert_to_dzi(temp_input_path, output_dir, event_loop)
+        )
         dzi_base_path = dzi_file.rsplit('.', 1)[0]
         dzi_related_count = count_dzi_related_files(dzi_base_path)
         dzi_count = count_dzi_files(output_dir)
