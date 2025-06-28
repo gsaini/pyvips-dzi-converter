@@ -6,6 +6,7 @@ import os
 import pyvips
 import zipfile
 import io
+import shutil
 
 def ensure_output_dir():
     """
@@ -30,6 +31,7 @@ def count_dzi_files(output_dir):
 def convert_to_dzi(input_path, output_dir):
     """
     Converts an image to Deep Zoom Image (DZI) format using pyvips.
+    Overwrites any existing DZI output for the same base name.
     Args:
         input_path (str): Path to the input image file.
         output_dir (str): Directory to save the DZI output.
@@ -39,6 +41,13 @@ def convert_to_dzi(input_path, output_dir):
     image = pyvips.Image.new_from_file(input_path, access="sequential")
     dzi_basename = os.path.splitext(os.path.basename(input_path))[0]
     dzi_path = os.path.join(output_dir, dzi_basename)
+    # Remove existing DZI descriptor and tile folder if they exist
+    dzi_descriptor = dzi_path + ".dzi"
+    tiles_folder = dzi_path + "_files"
+    if os.path.exists(dzi_descriptor):
+        os.remove(dzi_descriptor)
+    if os.path.exists(tiles_folder):
+        shutil.rmtree(tiles_folder)
     image.dzsave(dzi_path, tile_size=512)
     return dzi_path + ".dzi"
 
