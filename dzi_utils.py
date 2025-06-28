@@ -96,7 +96,9 @@ def create_dzi_zip(dzi_base_path):
         for root, _, files in os.walk(tiles_folder):
             for file in files:
                 abs_path = os.path.join(root, file)
-                rel_path = os.path.relpath(abs_path, os.path.dirname(dzi_base_path))
+                rel_path = os.path.relpath(
+                    abs_path, os.path.dirname(dzi_base_path)
+                )
                 zipf.write(abs_path, rel_path)
     zip_buffer.seek(0)
     return zip_buffer
