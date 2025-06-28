@@ -3,6 +3,7 @@
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)](https://www.python.org/) 
 [![Streamlit](https://img.shields.io/badge/streamlit-%E2%9C%94%EF%B8%8F-brightgreen?logo=streamlit)](https://streamlit.io/) 
 [![pyvips](https://img.shields.io/badge/pyvips-%E2%9C%94%EF%B8%8F-blueviolet?logo=python)](https://libvips.github.io/pyvips/)
+[![pylint](https://github.com/gsaini/dzi-converter/actions/workflows/pylint.yml/badge.svg)](https://github.com/gsaini/dzi-converter/actions/workflows/pylint.yml)
 
 This project provides a web-based Deep Zoom Image (DZI) converter using [Streamlit](https://streamlit.io/) and [pyvips](https://libvips.github.io/pyvips/). It allows users to upload large images, convert them to the DZI format (compatible with OpenSeadragon and similar viewers), and download the result as a zipped bundle containing the DZI descriptor and all image tiles.
 

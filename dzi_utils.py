@@ -16,35 +16,38 @@ def ensure_output_dir():
     Returns:
         str: The absolute path to the output directory.
     """
-    output_dir = os.path.join(os.getcwd(), "dzi_output")
-    os.makedirs(output_dir, exist_ok=True)
-    return output_dir
+    dzi_output_dir = os.path.join(os.getcwd(), "dzi_output")
+    os.makedirs(dzi_output_dir, exist_ok=True)
+    return dzi_output_dir
 
 
-def count_dzi_files(output_dir):
+def count_dzi_files(dzi_output_dir):
     """
     Counts the number of DZI descriptor (.dzi) files in the output directory.
     Args:
-        output_dir (str): Path to the output directory.
+        dzi_output_dir (str): Path to the output directory.
     Returns:
         int: Number of .dzi files found.
     """
-    return len([f for f in os.listdir(output_dir) if f.endswith('.dzi')])
+    return len([
+        file_name for file_name in os.listdir(dzi_output_dir)
+        if file_name.endswith('.dzi')
+    ])
 
 
-def convert_to_dzi(input_path, output_dir):
+def convert_to_dzi(input_filepath, dzi_output_dir):
     """
     Converts an image to Deep Zoom Image (DZI) format using pyvips.
     Overwrites any existing DZI output for the same base name.
     Args:
-        input_path (str): Path to the input image file.
-        output_dir (str): Directory to save the DZI output.
+        input_filepath (str): Path to the input image file.
+        dzi_output_dir (str): Directory to save the DZI output.
     Returns:
         str: Path to the generated .dzi descriptor file.
     """
-    image = pyvips.Image.new_from_file(input_path, access="sequential")
-    dzi_basename = os.path.splitext(os.path.basename(input_path))[0]
-    dzi_path = os.path.join(output_dir, dzi_basename)
+    image = pyvips.Image.new_from_file(input_filepath, access="sequential")
+    dzi_basename = os.path.splitext(os.path.basename(input_filepath))[0]
+    dzi_path = os.path.join(dzi_output_dir, dzi_basename)
     # Remove existing DZI descriptor and tile folder if they exist
     dzi_descriptor = dzi_path + ".dzi"
     tiles_folder = dzi_path + "_files"
@@ -90,9 +93,9 @@ def create_dzi_zip(dzi_base_path):
             zipf.write(dzi_descriptor, os.path.basename(dzi_descriptor))
         # Add all tile files
         tiles_folder = dzi_base_path + '_files'
-        for _, _, files in os.walk(tiles_folder):
+        for root, _, files in os.walk(tiles_folder):
             for file in files:
-                abs_path = os.path.join(tiles_folder, file)
+                abs_path = os.path.join(root, file)
                 rel_path = os.path.relpath(abs_path, os.path.dirname(dzi_base_path))
                 zipf.write(abs_path, rel_path)
     zip_buffer.seek(0)

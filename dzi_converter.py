@@ -35,14 +35,14 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
     with st.spinner("Converting to DZI format..."):
-        temp_input_path = f"/tmp/{uploaded_file.name}"
-        with open(temp_input_path, "wb") as file_handle:
+        temp_input_filepath = f"/tmp/{uploaded_file.name}"
+        with open(temp_input_filepath, "wb") as file_handle:
             file_handle.write(uploaded_file.getbuffer())
         output_dir = ensure_output_dir()
         event_loop = asyncio.new_event_loop()
         asyncio.set_event_loop(event_loop)
         dzi_file = event_loop.run_until_complete(
-            async_convert_to_dzi(temp_input_path, output_dir, event_loop)
+            async_convert_to_dzi(temp_input_filepath, output_dir, event_loop)
         )
         dzi_base_path = dzi_file.rsplit('.', 1)[0]
         dzi_related_count = count_dzi_related_files(dzi_base_path)
