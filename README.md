@@ -79,6 +79,19 @@ dzi-converter/
 - **libvips not found:** Make sure `vips` is installed and available in your system path.
 - **pyvips errors:** Ensure your image format is supported and that you have the latest version of pyvips and libvips.
 
+## Serving DZI Output Files via HTTP
+If you want to serve the generated DZI files and tiles over HTTP (for use with OpenSeadragon or remote access), you can use Python's built-in HTTP server:
+
+1. Open a terminal and navigate to the dzi_output directory:
+   ```sh
+   cd /path/to/dzi-converter/dzi_output
+   python3 -m http.server 8080
+   ```
+2. Access your files at `http://localhost:8080/` or replace `localhost` with your server's IP address for remote access.
+3. You can now use OpenSeadragon or other viewers to load the DZI descriptor and tiles directly from the server.
+
+**Note:** For production, consider using a more robust web server (e.g., nginx, Apache) and secure your files as needed.
+
 ## License
 MIT License
 
